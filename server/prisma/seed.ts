@@ -7,9 +7,9 @@ async function main() {
     data: {
       name: 'Alice',
       email: 'alice@prisma.io',
+      password: 'testing1'
     },
   })
-  console.log(user)
 }
 
 main()
