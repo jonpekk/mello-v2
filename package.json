@@ -5,7 +5,13 @@
   "license": "MIT",
   "scripts": {
     "dev:server": "yarn workspace server dev",
-    "build:server": "yarn workspace server build"
+    "build:server": "yarn workspace server build",
+    "dev:client": "yarn workspace client dev",
+    "build:client": "yarn workspace client build",
+    "start:client": "yarn workspace client start",
+    "dev": "yarn dev:server & yarn dev:client",
+    "build": "yarn build:server & yarn build:client",
+    "db:migrate:dev": "yarn workspace server prisma migrate dev"
   },
   "devDependencies": {
     "ts-node": "^10.9.2",
