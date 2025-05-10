@@ -1,4 +1,4 @@
 export interface BaseServerResponse {
   message?: string,
-  error?: any
+  error?: unknown
 }
