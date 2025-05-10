@@ -4,8 +4,7 @@
   "license": "MIT",
   "type": "commonjs",
   "scripts": {
-    "dev:static": "NODE_ENV=development ts-node ./server",
-    "dev": "nodemon --exec \"yarn run dev:static\" --watch ./server --ext .ts",
+    "dev": "NODE_ENV=development node --watch -r ts-node/register server.ts",
     "build": "tsc"
   },
   "devDependencies": {
