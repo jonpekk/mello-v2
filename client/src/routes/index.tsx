@@ -1,5 +1,5 @@
 // app/routes/index.tsx
-import { createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 
 
 async function getCount() {
@@ -19,6 +19,7 @@ function Home() {
 
   return (
     <>
+      <Link to='/register'>Register</Link>
       <p>Count from server {state}</p>
       <p>Need to</p>
       <ul>

@@ -1,0 +1,22 @@
+import { isValidEmail } from "@/helpers/form/isValidEmail"
+export function validateEmail(value: string) {
+  if (value === "") {
+    return "Email is required"
+  }
+
+
+  if (!isValidEmail(value)) {
+    return "Enter a valid email address"
+  }
+}
+
+export function validateRequiredField(fieldName: string, value?: string) {
+  if (!value && value === "") {
+    return `${fieldName} is required`
+  }
+
+  if (value && value.length < 3) {
+    return `${fieldName} must be at least 3 characters`
+  }
+
+}

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { PrismaClient } from './../prisma/generated/prisma';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 const prisma = new PrismaClient();
 
@@ -18,7 +19,12 @@ export const register = async (req: Request, res: Response) => {
     });
     res.status(201).json({ message: 'User created', userId: user.id });
   } catch (error) {
-    res.status(400).json({ error: 'User already exists' });
+    const err = error as PrismaClientKnownRequestError
+    const errorMeta = err.meta && err.meta.target as string[]
+    if (err.code === 'P2002' && errorMeta?.includes('email')) {
+      res.status(400).json({ message: 'This email is already registered to an account', error: err });
+    }
+    res.status(400).json({ message: "Oops! Something went wrong", error: err });
   }
 };
 
