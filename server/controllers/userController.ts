@@ -3,10 +3,11 @@ import { PrismaClient } from './../prisma/generated/prisma';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import type { UserLogin, LoginResponse } from '@/global/types/user';
 
 const prisma = new PrismaClient();
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req: Request<unknown, unknown, UserLogin>, res: Response) => {
   const { email, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -23,19 +24,22 @@ export const register = async (req: Request, res: Response) => {
     const errorMeta = err.meta && err.meta.target as string[]
     if (err.code === 'P2002' && errorMeta?.includes('email')) {
       res.status(400).json({ message: 'This email is already registered to an account', error: err });
+      return;
     }
     res.status(400).json({ message: "Oops! Something went wrong", error: err });
   }
 };
 
-export const login = async (req: Request, res: Response): Promise<void> => {
+export const login = async (
+  req: Request<unknown, unknown, UserLogin>,
+  res: Response<LoginResponse>
+) => {
   const { email, password } = req.body;
-  console.log(email, password)
 
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user || !(await bcrypt.compare(password, user.password))) {
-    res.status(401).json({ error: 'Invalid credentials' });
-    return;
+    res.status(401).json({ message: 'Invalid credentials', error: 'Invalid credentials' });
+    return
   }
 
   const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET as string, {
@@ -48,5 +52,5 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     maxAge: 3600000, // 1 hour
     sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
   });
-  res.json({ message: 'Logged in successfully' });
+  res.json({ message: 'Logged in successfully', user: user.id });
 };
