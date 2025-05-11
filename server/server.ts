@@ -23,7 +23,7 @@ app.get('/', async (req, res) => {
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/counter', counterRoutes)
 
-app.get('/profile', authenticate, (req, res) => {
+app.get('/api/v1/profile', authenticate, (req, res) => {
   res.json({ auth: 'BOOM' })
 });
 

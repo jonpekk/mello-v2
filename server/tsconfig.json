@@ -6,7 +6,12 @@
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@/global/types/*": [
+        "../types/*"
+      ]
+    }
   },
   "include": [
     "**/*"
