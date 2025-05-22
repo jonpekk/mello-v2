@@ -6,11 +6,13 @@
   "scripts": {
     "dev:server": "yarn workspace server dev",
     "build:server": "yarn workspace server build",
+    "test:server": "yarn workspace server test",
     "dev:client": "yarn workspace client dev",
     "build:client": "yarn workspace client build",
     "start:client": "yarn workspace client start",
     "dev": "yarn dev:server & yarn dev:client",
     "build": "yarn build:server & yarn build:client",
+    "test": "yarn test:server",
     "db:migrate:dev": "yarn workspace server prisma migrate dev"
   },
   "devDependencies": {
