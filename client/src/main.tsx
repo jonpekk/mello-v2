@@ -16,6 +16,7 @@ const router = createRouter({
   scrollRestoration: true,
   defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
+  defaultNotFoundComponent: () => <div>404</div>,
 })
 
 // Register the router instance for type safety

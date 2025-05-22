@@ -1,11 +1,33 @@
-import { Request, Response } from 'express';
-import { PrismaClient } from './../prisma/generated/prisma';
 import bcrypt from 'bcryptjs';
+import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import { PrismaClient } from './../prisma/generated/prisma';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import type { UserLogin, LoginResponse } from '@/global/types/user';
+import { AuthRequest } from '@/middleware/auth';
 
 const prisma = new PrismaClient();
+
+export const profile = async (req: AuthRequest, res: Response) => {
+  const { user, params } = req
+  const profile = await prisma.user.findUnique({
+    where: {
+      id: Number(params.id)
+    },
+    select: {
+      id: true,
+      email: user?.userId === Number(params?.id),
+      name: true
+    }
+  })
+
+  if (!profile) {
+    res.status(404).json({ message: 'User not found' })
+    return
+  }
+
+  res.status(200).json({ message: 'Success', profile })
+}
 
 export const register = async (req: Request<unknown, unknown, UserLogin>, res: Response) => {
   const { email, password } = req.body;
@@ -35,6 +57,7 @@ export const login = async (
   res: Response<LoginResponse>
 ) => {
   const { email, password } = req.body;
+  const expiresIn = 3600000;
 
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -49,8 +72,8 @@ export const login = async (
   res.cookie('token', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    maxAge: 3600000, // 1 hour
+    maxAge: expiresIn, // 1 hour
     sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
   });
-  res.json({ message: 'Logged in successfully', user: user.id });
+  res.json({ message: 'Logged in successfully', id: user.id });
 };
