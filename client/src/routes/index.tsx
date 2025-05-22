@@ -1,13 +1,11 @@
 // app/routes/index.tsx
 import { Link, createFileRoute } from '@tanstack/react-router'
 
-
 async function getCount() {
   const count = await fetch(`/api/v1/counter`)
   const json = await count.json()
   return json.count
 }
-
 
 export const Route = createFileRoute('/')({
   component: Home,

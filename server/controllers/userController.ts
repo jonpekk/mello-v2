@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { PrismaClient } from './../prisma/generated/prisma';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import type { UserLogin, LoginResponse } from '@/global/types/user';
-import { AuthRequest } from '@/middleware/auth';
+import type { AuthRequest } from '@/types/auth';
 
 const prisma = new PrismaClient();
 

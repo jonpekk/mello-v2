@@ -1,12 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import type { AuthRequest } from '@/types/auth';
 
 dotenv.config();
-
-export interface AuthRequest extends Request {
-  user?: jwt.JwtPayload;
-}
 
 export const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
   const token = req.cookies.token;
