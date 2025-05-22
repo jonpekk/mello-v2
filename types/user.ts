@@ -1,4 +1,4 @@
-import { BaseServerResponse } from "./response"
+import type { BaseServerResponse } from "./response"
 
 export interface UserLogin {
   email: string
@@ -6,5 +6,11 @@ export interface UserLogin {
 }
 
 export interface LoginResponse extends BaseServerResponse {
-  user?: number
+  id?: number
+}
+
+export interface Profile {
+  id: number,
+  email?: string,
+  name?: string
 }
