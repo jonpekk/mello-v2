@@ -9,5 +9,5 @@ export default defineConfig([
   { files: ["**/*.js"], languageOptions: { sourceType: "script" } },
   { files: ["**/*.{js,mjs,cjs,ts}"], languageOptions: { globals: { ...globals.browser, ...globals.node } } },
   tseslint.configs.recommended,
-  globalIgnores(["build/**/*", "server/dist/**/*", "server/prisma/**/*"]),
+  globalIgnores(["build/**/*", "server/dist/**/*", "server/prisma/**/*", "client/dist/**"]),
 ]);
