@@ -1,9 +1,9 @@
 import bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from './../prisma/generated/prisma';
+import { PrismaClient } from '../db/generated/prisma';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import type { UserLogin, LoginResponse } from '@/global/types/user';
+import type { LoginResponse } from '@/global/types/user';
 import type { AuthRequest } from '@/types/auth';
 
 const prisma = new PrismaClient();
@@ -29,7 +29,7 @@ export const profile = async (req: AuthRequest, res: Response) => {
   res.status(200).json({ message: 'Success', profile })
 }
 
-export const register = async (req: Request<unknown, unknown, UserLogin>, res: Response) => {
+export const register = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -53,7 +53,7 @@ export const register = async (req: Request<unknown, unknown, UserLogin>, res: R
 };
 
 export const login = async (
-  req: Request<unknown, unknown, UserLogin>,
+  req: Request,
   res: Response<LoginResponse>
 ) => {
   const { email, password } = req.body;

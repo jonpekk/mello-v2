@@ -1,9 +1,7 @@
 import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 import type { AuthRequest } from '@/types/auth';
 
-dotenv.config();
 
 export const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
   const token = req.cookies.token;
