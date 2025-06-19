@@ -5,6 +5,5 @@ export const Route = createFileRoute('/profile/$profileId/edit')({
 })
 
 function RouteComponent() {
-  console.log('hit')
   return <div>Hello "/profile/$slug/edit"!</div>
 }
