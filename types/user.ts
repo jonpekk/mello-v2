@@ -11,6 +11,8 @@ export interface LoginResponse extends BaseServerResponse {
 
 export interface Profile {
   id: number,
+  username: string
   email?: string,
-  name?: string
+  firstName?: string
+  lastName?: string,
 }

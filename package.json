@@ -13,6 +13,7 @@
     "dev": "yarn dev:server & yarn dev:client",
     "build": "yarn build:server & yarn build:client",
     "test": "yarn test:server",
+    "db:reset": "yarn workspace server prisma migrate reset",
     "db:migrate:dev": "yarn workspace server prisma migrate dev"
   },
   "devDependencies": {
