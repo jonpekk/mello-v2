@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from '../db/generated/prisma';
+import { PrismaClient } from '../prisma/generated/prisma';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import type { LoginResponse } from '@/global/types/user';
 import type { AuthRequest } from '@/types/auth';
@@ -17,7 +17,9 @@ export const profile = async (req: AuthRequest, res: Response) => {
     select: {
       id: true,
       email: user?.userId === Number(params?.id),
-      name: true
+      username: true,
+      firstName: true,
+      lastName: true
     }
   })
 
@@ -26,17 +28,20 @@ export const profile = async (req: AuthRequest, res: Response) => {
     return
   }
 
-  res.status(200).json({ message: 'Success', profile })
+  res.status(200).json({ message: 'Success', profile, userOwnsProfile: user?.userId === profile.id })
 }
 
 export const register = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const { email, password, firstName, lastName, username } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
     const user = await prisma.user.create({
       data: {
         email,
+        firstName,
+        lastName,
+        username,
         password: hashedPassword,
       },
     });

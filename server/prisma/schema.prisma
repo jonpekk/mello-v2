@@ -18,12 +18,14 @@ model User {
   id    Int     @id @default(autoincrement())
   email String  @unique
   password String
-  name  String?
-  posts Post[]
+  firstName String?
+  lastName String?
+  username String @unique
+  tasks Tasks[]
     createdAt DateTime @default(now())
 }
 
-model Post {
+model Tasks {
   id        Int     @id @default(autoincrement())
   title     String
   content   String?

@@ -18,6 +18,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
   }
 };
 
+
 export const tryAuth = (req: AuthRequest, res: Response, next: NextFunction) => {
   const token = req.cookies.token;
   if (!token) {

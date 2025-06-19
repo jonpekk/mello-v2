@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { validateEmail, validateRequiredField } from "@/helpers/form/validations";
+import { validateAlphaNumeric, validateEmail, validateRequiredField } from "@/helpers/form/validations";
 import { useAppForm } from "@/hook/form";
 import type { BaseServerResponse } from '@/global/types/response'
 import type { CreateUserResponse, RegisterInputs } from '@/components/RegistrationForm/types';
@@ -42,7 +42,10 @@ export default function RegistrationForm() {
   const form = useAppForm({
     defaultValues: {
       email: "",
-      password: ""
+      password: "",
+      firstName: "",
+      lastName: "",
+      username: ""
     },
     onSubmit: async ({ value }) => {
       createUser.mutateAsync(value)
@@ -72,6 +75,28 @@ export default function RegistrationForm() {
             validators={{
               onSubmit: ({ value }) => validateRequiredField("Password", value)
             }}
+          />
+          <form.AppField
+            name="username"
+            children={(field) => <field.TextInput label="Username" />}
+            validators={{
+              onSubmit: ({ value }) => {
+                if (validateRequiredField("Username", value)) {
+                  return validateRequiredField("Username", value)
+                }
+                if (validateAlphaNumeric(value)) {
+                  return validateAlphaNumeric(value)
+                }
+              }
+            }}
+          />
+          <form.AppField
+            name="firstName"
+            children={(field) => <field.TextInput label="First Name" />}
+          />
+          <form.AppField
+            name="lastName"
+            children={(field) => <field.TextInput label="Last Name" />}
           />
           <form.AppForm>
             <form.SubmitButton label="Register" />
