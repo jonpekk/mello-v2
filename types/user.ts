@@ -1,15 +1,9 @@
-import type { BaseServerResponse, NewBaseServerResponse } from "./response"
+import type { BaseServerResponse } from "./response"
 
 export interface UserLogin {
   email: string
   password: string
 }
-
-export interface LoginResponse extends BaseServerResponse {
-  id?: number
-}
-
-export interface ProfileResponse extends NewBaseServerResponse<Profile> { }
 
 export interface Profile {
   id: number,
@@ -19,3 +13,7 @@ export interface Profile {
   firstName?: string
   lastName?: string,
 }
+
+export type LoginResponse = BaseServerResponse<{ id: number }>
+
+export type ProfileResponse = BaseServerResponse<Profile>

@@ -5,6 +5,6 @@ export type RegisterInputs = {
   password: string
 }
 
-export interface CreateUserResponse extends BaseServerResponse {
-  userId?: string,
-}
+export type CreateUserResponse = BaseServerResponse<{
+  userId?: string
+}>

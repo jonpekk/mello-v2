@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { validateAlphaNumeric, validateEmail, validateRequiredField } from "@/helpers/form/validations";
 import { useAppForm } from "@/hook/form";
-import type { BaseServerResponse } from '@/global/types/response'
 import type { CreateUserResponse, RegisterInputs } from '@/components/RegistrationForm/types';
 
 async function registerUser(value: RegisterInputs): Promise<CreateUserResponse> {
@@ -23,7 +22,7 @@ async function registerUser(value: RegisterInputs): Promise<CreateUserResponse> 
 
     throw (resError)
   } catch (error) {
-    const err = error as BaseServerResponse
+    const err = error as CreateUserResponse
     return err
   }
 }
@@ -36,7 +35,7 @@ export default function RegistrationForm() {
         console.warn(data.error)
       }
 
-      return data.message
+      return data
     },
   })
   const form = useAppForm({
@@ -104,7 +103,7 @@ export default function RegistrationForm() {
         </div>
       </form>
       {createUser.isSuccess && (
-        <p>{createUser.data.message}</p>
+        <p>User created Successfully</p>
       )}
     </div>
   );

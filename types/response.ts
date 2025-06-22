@@ -1,9 +1,4 @@
-export interface BaseServerResponse {
-  message?: string,
-  error?: unknown
-}
-
-export interface NewBaseServerResponse<T> {
+export interface BaseServerResponse<T> {
   success: boolean,
   error?: unknown,
   data?: T
