@@ -2,7 +2,6 @@ import { useMutation } from "@tanstack/react-query"
 import { validateRequiredField } from "@/helpers/form/validations"
 import { useAppForm } from "@/hook/form"
 import type { UserLogin, LoginResponse } from "@/global/types/user"
-import type { BaseServerResponse } from "@/global/types/response"
 
 async function login(value: UserLogin): Promise<LoginResponse> {
   try {
@@ -22,7 +21,7 @@ async function login(value: UserLogin): Promise<LoginResponse> {
     return await response.json()
 
   } catch (err: unknown) {
-    const error = err as BaseServerResponse
+    const error = err as LoginResponse
     return error
   }
 }
@@ -71,7 +70,7 @@ export default function LoginForm() {
         </form.AppForm>
       </form>
       {loginMutation.isSuccess && (
-        <p>{loginMutation.data.message}</p>
+        <p>Logged in successfully</p>
       )}
     </div>
   )

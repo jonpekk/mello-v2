@@ -155,7 +155,7 @@ export const login = async (
 
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user || !(await bcrypt.compare(password, user.password))) {
-    res.status(401).json({ message: 'Invalid credentials', error: 'Invalid credentials' });
+    res.status(401).json({ success: false, error: 'Invalid credentials' });
     return
   }
 
@@ -169,5 +169,5 @@ export const login = async (
     maxAge: expiresIn, // 1 hour
     sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
   });
-  res.json({ message: 'Logged in successfully', id: user.id });
+  res.json({ success: true, data: { id: user.id } });
 };

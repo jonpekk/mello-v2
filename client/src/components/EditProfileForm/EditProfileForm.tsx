@@ -2,10 +2,9 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { validateAlphaNumeric, validateEmail, validateRequiredField } from "@/helpers/form/validations";
 import { useAppForm } from "@/hook/form";
-import type { Profile } from '@/global/types/user';
-import type { BaseServerResponse } from '@/global/types/response';
+import type { Profile, ProfileResponse } from '@/global/types/user';
 
-async function updateUserProfile({ userId, data }: { userId: string; data: Partial<Profile> }): Promise<BaseServerResponse> {
+async function updateUserProfile({ userId, data }: { userId: string; data: Partial<Profile> }): Promise<ProfileResponse> {
   try {
     const response = await fetch(`/api/v1/users/${userId}`, {
       method: 'PATCH',
@@ -22,8 +21,10 @@ async function updateUserProfile({ userId, data }: { userId: string; data: Parti
 
     return await response.json();
   } catch (error) {
-    const err = error as BaseServerResponse;
-    return err;
+    return {
+      success: false,
+      error: error as unknown,
+    };
   }
 }
 
