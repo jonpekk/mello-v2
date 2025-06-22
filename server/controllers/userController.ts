@@ -8,28 +8,117 @@ import type { AuthRequest } from '@/types/auth';
 
 const prisma = new PrismaClient();
 
-export const profile = async (req: AuthRequest, res: Response) => {
-  const { user, params } = req
-  const profile = await prisma.user.findUnique({
-    where: {
-      id: Number(params.id)
-    },
-    select: {
-      id: true,
-      email: user?.userId === Number(params?.id),
-      username: true,
-      firstName: true,
-      lastName: true
-    }
-  })
+export const getProfile = async (req: AuthRequest, res: Response) => {
+  try {
+    const { user, params } = req;
+    const profileId = Number(params.id);
 
-  if (!profile) {
-    res.status(404).json({ message: 'User not found' })
+    if (isNaN(profileId)) {
+      res.status(400).json({
+        success: false,
+        error: 'Invalid profile ID'
+      });
+      return
+    }
+
+    const profile = await prisma.user.findUnique({
+      where: { id: profileId },
+      select: {
+        id: true,
+        email: user?.userId === profileId,
+        username: true,
+        firstName: true,
+        lastName: true
+      }
+    });
+
+    if (!profile) {
+      res.status(404).json({
+        success: false,
+        error: 'Profile not found'
+      });
+      return
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        ...profile,
+        userOwnsProfile: user?.userId === profile.id
+      }
+    });
+    return
+
+  } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      console.error('Database error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Database error occurred'
+      });
+      return
+    }
+
+    res.status(500).json({
+      success: false,
+      error: 'An unexpected error occurred'
+    });
     return
   }
+};
 
-  res.status(200).json({ message: 'Success', profile, userOwnsProfile: user?.userId === profile.id })
-}
+export const editProfile = async (req: AuthRequest, res: Response) => {
+  try {
+    const { user, body } = req;
+
+    if (!user?.userId) {
+      res.status(401).json({
+        success: false,
+        error: 'Not authenticated'
+      });
+      return;
+    }
+
+
+    const profile = await prisma.user.update({
+      where: { id: user.userId },
+      data: body,
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        firstName: true,
+        lastName: true
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      data: profile
+    });
+
+  } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      // Handle specific Prisma errors
+      if (error.code === 'P2025') {
+        res.status(404).json({
+          success: false,
+          error: 'User not found'
+        });
+        return;
+      }
+      // Handle other Prisma errors (like unique constraint violations)
+      console.error('Database error:', error);
+    }
+
+    // Handle other errors
+    console.error('Error in editProfile:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update profile'
+    });
+  }
+};
 
 export const register = async (req: Request, res: Response) => {
   const { email, password, firstName, lastName, username } = req.body;
