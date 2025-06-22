@@ -1,11 +1,5 @@
 import { createFileRoute, useLoaderData, notFound, Link } from "@tanstack/react-router";
-import type { BaseServerResponse } from "@/global/types/response";
-import type { Profile } from "@/global/types/user";
-
-interface ProfileResponse extends BaseServerResponse {
-  profile: Profile,
-  userOwnsProfile: boolean
-}
+import type { ProfileResponse } from "@/global/types/user";
 
 
 async function getProfile(id: string): Promise<ProfileResponse> {
@@ -26,17 +20,21 @@ export const Route = createFileRoute("/profile/$slug")({
 
 function ProfilePage() {
 
-  const { profile, userOwnsProfile } = useLoaderData({ from: '/profile/$slug' })
+  const { data, success } = useLoaderData({ from: '/profile/$slug' })
+
+  if (!success) {
+    return <div>There was an error Loading this profile</div>
+  }
 
 
-  return (
+  return data && (
     <div>
       <h1>Profile</h1>
-      <p>id: {profile.id}</p>
-      <p>Username: @{profile.username}</p>
-      {profile?.email && <p>Email: {profile.email}</p>}
-      {profile?.firstName && <p>First Name: {profile.firstName}</p>}
-      {userOwnsProfile && <Link to={`/profile/$profileId/edit`} params={{ profileId: profile.id.toString() }}>Edit</Link>}
+      <p>id: {data.id}</p>
+      <p>Username: @{data.username}</p>
+      {data.email && <p>Email: {data.email}</p>}
+      {data.firstName && <p>First Name: {data.firstName}</p>}
+      {data.userOwnsProfile && <Link to={`/profile/$profileId/edit`} params={{ profileId: data.id.toString() }}>Edit</Link>}
     </div>
   )
 }

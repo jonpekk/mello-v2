@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import type { AuthRequest } from '@/types/auth';
 
 
-export const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const requireAuth = (req: AuthRequest, res: Response, next: NextFunction) => {
   const token = req.cookies.token;
   if (!token) {
     return next(new Error('A token is required for authentication'));
@@ -19,7 +19,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
 };
 
 
-export const tryAuth = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const optionalAuth = (req: AuthRequest, res: Response, next: NextFunction) => {
   const token = req.cookies.token;
   if (!token) {
     return next();
