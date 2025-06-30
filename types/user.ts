@@ -10,10 +10,12 @@ export interface Profile {
   username: string
   userOwnsProfile: boolean
   email?: string,
-  firstName?: string
-  lastName?: string,
+  firstName?: string | null
+  lastName?: string | null,
 }
 
-export type LoginResponse = BaseServerResponse<{ id: number }>
+export type LoginResponse = BaseServerResponse<{ id?: number, message: string }>
+
+export type CheckAuthResponse = BaseServerResponse<{ isLoggedIn: boolean, id?: number }>
 
 export type ProfileResponse = BaseServerResponse<Profile>

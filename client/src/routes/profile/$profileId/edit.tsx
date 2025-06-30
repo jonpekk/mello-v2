@@ -1,9 +1,24 @@
+import { redirect } from '@tanstack/react-router';
 import { createFileRoute, useLoaderData } from '@tanstack/react-router';
 import EditProfileForm from '@/components/EditProfileForm/EditProfileForm';
+import { checkAuthOnClient } from '@/helpers/auth';
 import type { ProfileResponse } from '@/global/types/user';
 
 export const Route = createFileRoute('/profile/$profileId/edit')({
   component: RouteComponent,
+  beforeLoad: async () => {
+    const { isLoggedIn } = await checkAuthOnClient();
+    if (!isLoggedIn) {
+      throw redirect({
+        to: '/login',
+        search: {
+          // TODO: Use this redirect to redirect back to this page after login
+          // You can also just redirect back to the profile, but this can be edited later
+          redirect: location.href,
+        },
+      })
+    }
+  },
   loader: async ({ params }) => {
     const response = await fetch(`/api/v1/users/${params.profileId}`);
 
@@ -22,7 +37,6 @@ export const Route = createFileRoute('/profile/$profileId/edit')({
 });
 
 // TODO:
-// Add auth route validation (Maybe through tanstack!!)
 // Sanitize all forms before moving forward to validation
 
 function RouteComponent() {

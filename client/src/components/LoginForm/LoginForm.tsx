@@ -5,7 +5,7 @@ import type { UserLogin, LoginResponse } from "@/global/types/user"
 
 async function login(value: UserLogin): Promise<LoginResponse> {
   try {
-    const response = await fetch('api/v1/users/login', {
+    const response = await fetch('/api/v1/auth/login', {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -40,7 +40,6 @@ export default function LoginForm() {
     }
   })
 
-
   return (
     <div>
       <h1>Login</h1>
@@ -69,8 +68,12 @@ export default function LoginForm() {
           <form.SubmitButton label="Login" />
         </form.AppForm>
       </form>
-      {loginMutation.isSuccess && (
+      {loginMutation.data?.success && (
         <p>Logged in successfully</p>
+      )}
+
+      {!loginMutation.data?.success && (
+        <p>{loginMutation.data?.data?.message}</p>
       )}
     </div>
   )
