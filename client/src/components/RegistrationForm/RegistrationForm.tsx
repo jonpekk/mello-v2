@@ -5,7 +5,7 @@ import type { CreateUserResponse, RegisterInputs } from '@/components/Registrati
 
 async function registerUser(value: RegisterInputs): Promise<CreateUserResponse> {
   try {
-    const response = await fetch("/api/v1/users/register", {
+    const response = await fetch("/api/v1/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

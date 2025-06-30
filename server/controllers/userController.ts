@@ -1,14 +1,12 @@
-import bcrypt from 'bcryptjs';
-import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
+import { RequestHandler, Response } from 'express';
 import { PrismaClient } from '../prisma/generated/prisma';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import type { LoginResponse } from '@/global/types/user';
 import type { AuthRequest } from '@/types/auth';
+import type { ProfileResponse } from '@/global/types/user';
 
 const prisma = new PrismaClient();
 
-export const getProfile = async (req: AuthRequest, res: Response) => {
+export const getProfile: RequestHandler = async (req: AuthRequest, res: Response<ProfileResponse>) => {
   try {
     const { user, params } = req;
     const profileId = Number(params.id);
@@ -18,7 +16,7 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
         success: false,
         error: 'Invalid profile ID'
       });
-      return
+      return;
     }
 
     const profile = await prisma.user.findUnique({
@@ -37,7 +35,7 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
         success: false,
         error: 'Profile not found'
       });
-      return
+      return;
     }
 
     res.status(200).json({
@@ -56,18 +54,18 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
         success: false,
         error: 'Database error occurred'
       });
-      return
+      return;
     }
 
     res.status(500).json({
       success: false,
       error: 'An unexpected error occurred'
     });
-    return
+    return;
   }
 };
 
-export const editProfile = async (req: AuthRequest, res: Response) => {
+export const editProfile: RequestHandler = async (req: AuthRequest, res: Response<ProfileResponse>) => {
   try {
     const { user, body } = req;
 
@@ -94,7 +92,10 @@ export const editProfile = async (req: AuthRequest, res: Response) => {
 
     res.status(200).json({
       success: true,
-      data: profile
+      data: {
+        ...profile,
+        userOwnsProfile: user?.userId === profile.id
+      }
     });
 
   } catch (error) {
@@ -118,56 +119,4 @@ export const editProfile = async (req: AuthRequest, res: Response) => {
       error: 'Failed to update profile'
     });
   }
-};
-
-export const register = async (req: Request, res: Response) => {
-  const { email, password, firstName, lastName, username } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  try {
-    const user = await prisma.user.create({
-      data: {
-        email,
-        firstName,
-        lastName,
-        username,
-        password: hashedPassword,
-      },
-    });
-    res.status(201).json({ message: 'User created', userId: user.id });
-  } catch (error) {
-    const err = error as PrismaClientKnownRequestError
-    const errorMeta = err.meta && err.meta.target as string[]
-    if (err.code === 'P2002' && errorMeta?.includes('email')) {
-      res.status(400).json({ message: 'This email is already registered to an account', error: err });
-      return;
-    }
-    res.status(400).json({ message: "Oops! Something went wrong", error: err });
-  }
-};
-
-export const login = async (
-  req: Request,
-  res: Response<LoginResponse>
-) => {
-  const { email, password } = req.body;
-  const expiresIn = 3600000;
-
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    res.status(401).json({ success: false, error: 'Invalid credentials' });
-    return
-  }
-
-  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET as string, {
-    expiresIn: '1h',
-  });
-
-  res.cookie('token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: expiresIn, // 1 hour
-    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
-  });
-  res.json({ success: true, data: { id: user.id } });
 };
